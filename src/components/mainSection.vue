@@ -126,20 +126,21 @@ export default {
     },
 
     getAfterToday () {
-      const url2 = `https://api.openweathermap.org/data/2.5/forecast?q=${this.city}&lang=ru&units=metric&cnt=19&appid=148bc838f76399f290f7a818c1241656`
+      const url2 = `https://api.openweathermap.org/data/2.5/forecast?q=${this.city}&lang=ru&units=metric&cnt=17&appid=148bc838f76399f290f7a818c1241656`
       Axios
         .get(url2)
         .then(response => {
-          if (response.data.list[10].main.temp > 0) {
-            this.tomorrow.temp = `+${Math.round(response.data.list[10].main.temp)}`
+          if (response.data.list[8].main.temp > 0) {
+            this.tomorrow.temp = `+${Math.round(response.data.list[8].main.temp)}`
           } else {
-            this.tomorrow.temp = Math.round(response.data.list[10].main.temp)
+            this.tomorrow.temp = Math.round(response.data.list[8].main.temp)
           }
-          this.tomorrow.description = response.data.list[10].weather[0].description
-          this.afterTomorrow.temp = Math.round(response.data.list[18].main.temp)
-          this.afterTomorrow.description = response.data.list[18].weather[0].description
-          this.imageTomorrow = `http://openweathermap.org/img/wn/${response.data.list[10].weather[0].icon}.png`
-          this.imageAfterTomorrow = `http://openweathermap.org/img/wn/${response.data.list[18].weather[0].icon}.png`
+          this.tomorrow.description = response.data.list[8].weather[0].description
+          this.afterTomorrow.temp = Math.round(response.data.list[16].main.temp)
+          this.afterTomorrow.description = response.data.list[16].weather[0].description
+          this.imageTomorrow = `http://openweathermap.org/img/wn/${response.data.list[8].weather[0].icon}.png`
+          this.imageAfterTomorrow = `http://openweathermap.org/img/wn/${response.data.list[16].weather[0].icon}.png`
+          console.log(response.data)
         })
     },
 
