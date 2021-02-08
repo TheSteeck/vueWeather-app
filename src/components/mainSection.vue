@@ -5,8 +5,9 @@
       <h2>Тренировочное приложение</h2>
     </div>
     <div class="weather-section">
+
       <div class="filter">
-        <q-input bottom-slots :color="colorInput" v-model="city" label="Название" dense>
+        <q-input ref="input" @focus="focused = true" @blur="hideDropDown" bottom-slots :color="colorInput" v-model="city" @input="getCitiesNames" label="Название" dense>
           <template v-slot:append>
             <q-icon :color="colorInput" name="close" @click="city = ''" class="cursor-pointer" />
           </template>
@@ -14,8 +15,14 @@
             {{errMsg}}
           </template>
         </q-input>
+        <div ref="dropDown" class="drop-down-items">
+          <div v-for="(item, i) in filtredCities" :key="i" @click="city = item, getToday()" class="d-d-item">
+            {{item}}
+          </div>
+        </div>
         <q-btn @click="getToday" size="lg" unelevated rounded icon="search" color="purple" label="Искать" />
       </div>
+
       <div class="output">
         <h3>{{today.name}}</h3>
         <div class="weather">
@@ -27,7 +34,6 @@
             </div>
             <p>{{today.temp}}</p>
           </div>
-
           <div class="tommorow data">
             <p>Завтра</p>
             <div>
@@ -36,7 +42,6 @@
             </div>
             <p>{{tomorrow.temp}}</p>
           </div>
-
           <div class="after-tommorow data">
             <p>Послезавтра</p>
             <div>
@@ -47,6 +52,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </q-layout>
 </template>
@@ -57,7 +63,7 @@ export default {
   name: 'MainLayout',
   data () {
     return {
-      city: 'Moscow',
+      city: 'Москва',
       today: {
         temp: '',
         descriprion: '',
@@ -77,7 +83,11 @@ export default {
 
       errMsg: 'Город не найден',
       errMsgShow: true,
-      colorInput: ''
+      colorInput: '',
+
+      citiesList: [],
+      filtredCities: [],
+      focused: false
     }
   },
 
@@ -131,6 +141,28 @@ export default {
           this.imageTomorrow = `http://openweathermap.org/img/wn/${response.data.list[10].weather[0].icon}.png`
           this.imageAfterTomorrow = `http://openweathermap.org/img/wn/${response.data.list[18].weather[0].icon}.png`
         })
+    },
+
+    getCitiesNames () {
+      Axios
+        .get('russian-cities.json')
+        .then(response => {
+          response.data.map(city => {
+            this.citiesList.push(city.name)
+          })
+        })
+        .then(() => {
+          this.filtredCities = [...new Set(this.citiesList.filter(name => { // [...new Set(...)] удаляет дубликаты в массиве
+            return name.match(`^${this.city.charAt(0).toUpperCase() + this.city.slice(1)}`)
+          }))]
+          this.$refs.dropDown.style.height = '20vh'
+        })
+    },
+
+    hideDropDown () {
+      setTimeout(() => {
+        this.$refs.dropDown.style.height = '0vh'
+      }, 100)
     }
 
   }
@@ -142,8 +174,8 @@ export default {
   $dark: #3C4858
   $purple: #9C27B0
   *
-      padding: 0
-      margin: 0
+    padding: 0
+    margin: 0
   .layout
     width: 100%
     height: 100vh
@@ -191,6 +223,35 @@ export default {
       align-items: top
       justify-content: center
       box-shadow: 0 0 1vh #111
+      .filter
+        display: grid
+        grid-template-rows: 0fr 0fr 0fr
+        // grid-gap: 1vh
+        // position: relative
+        .drop-down-items
+          display: grid
+          height: 0vh
+          width: 100%
+          overflow-y: scroll
+          background-color: #f3f3f3
+          transition: .3s, easy
+          &::-webkit-scrollbar
+            width: .5vw
+          &::-webkit-scrollbar-thumb
+            background: #ddd
+            border-radius: 20px
+          .d-d-item
+            display: grid
+            align-items: center
+            height: 4vh
+            cursor: pointer
+            transition: .3s, easy
+            &:hover
+              background: #ddd
+
+        button
+          align-self: start
+          justify-self: center
       .output
         display: grid
         grid-template-rows: 1fr 3fr
