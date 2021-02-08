@@ -34,7 +34,7 @@
             </div>
             <p>{{today.temp}}</p>
           </div>
-          <div class="tommorow data">
+          <div class="tomorrow data">
             <p>Завтра</p>
             <div>
               <img :src="imageTomorrow" />
@@ -42,13 +42,13 @@
             </div>
             <p>{{tomorrow.temp}}</p>
           </div>
-          <div class="after-tommorow data">
+          <div class="after-tomorrow data">
             <p>Послезавтра</p>
             <div>
               <img :src="imageAfterTomorrow" />
-              <p>{{tomorrow.description}}</p>
+              <p>{{afterTomorrow.description}}</p>
             </div>
-            <p>{{tomorrow.temp}}</p>
+            <p>{{afterTomorrow.temp}}</p>
           </div>
         </div>
       </div>
@@ -226,8 +226,6 @@ export default {
       .filter
         display: grid
         grid-template-rows: 0fr 0fr 0fr
-        // grid-gap: 1vh
-        // position: relative
         .drop-down-items
           display: grid
           height: 0vh
